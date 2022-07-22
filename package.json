@@ -17,6 +17,7 @@
 	"devDependencies": {
 		"@babel/core": "^7.18.9",
 		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/adapter-vercel": "1.0.0-next.65",
 		"@sveltejs/kit": "next",
 		"@testing-library/dom": "^8.16.0",
 		"@testing-library/jest-dom": "^5.16.4",

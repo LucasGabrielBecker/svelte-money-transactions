@@ -1,12 +1,13 @@
 <script lang="ts">
 	import Modal from '$lib/modal/Modal.svelte';
 	import Input from '$lib/input/Input.svelte';
-	import {Select} from '$lib/select'
+	import { Select } from '$lib/select';
+	import { Spinner } from '$lib/spinner';
 	import TransactionsTable from '../lib/TransactionsTable/TransactionsTable.svelte';
 	import type { Transaction } from '../types/transaction';
-	import {isModalVisible} from "../store/modal.store"
-	
-	 let showModal: boolean = false;
+	import { isModalVisible } from '../store/modal.store';
+
+	let showModal: boolean = false;
 	let transactions = getTransactions();
 	let statusFilter: string = '';
 	let search: string;
@@ -21,7 +22,6 @@
 		const data = await res.json();
 		return data;
 	}
-
 </script>
 
 <div class="">
@@ -34,26 +34,33 @@
 			alt="hand logo"
 			width="100px"
 		/>
+		<Spinner />
 	{:then result}
-	<div class="flex flex-col md:flex-row items-center mb-12 sticky top-0 bg-white">
-		<img
-			src="/Rock_On_R-Angle_A1.png"
-			class="hover:scale-125 transition-all mr-4"
-			alt="hand logo"
-			width="100px"
-		/>
-		<Input placeholder="Titulo/Descrição" on:keyup={(event) => (search = event.currentTarget.value)} />
-		<Select bind:value={statusFilter} options={[...new Set(result.map((t) => t.status))]}/>
-	</div>
+		<div class="flex flex-col md:flex-row items-center mb-12 sticky top-0 bg-white">
+			<img
+				src="/Rock_On_R-Angle_A1.png"
+				class="hover:scale-125 transition-all mr-4"
+				alt="hand logo"
+				width="100px"
+			/>
+			<Input
+				placeholder="Titulo/Descrição"
+				on:keyup={(event) => (search = event.currentTarget.value)}
+			/>
+			<Select bind:value={statusFilter} options={[...new Set(result.map((t) => t.status))]} />
+		</div>
 
 		<TransactionsTable
 			transactions={search
-				? result.filter((t) =>  t.title.toLowerCase().startsWith(search) || t.description.toLowerCase().startsWith(search))
+				? result.filter(
+						(t) =>
+							t.title.toLowerCase().startsWith(search) ||
+							t.description.toLowerCase().startsWith(search)
+				  )
 				: result}
-				{statusFilter}
+			{statusFilter}
 			on:TRANSACTION_DETAILS={handleShowDetails}
 		/>
-
 	{:catch error}
 		<p style="color: red">{error.message}</p>
 	{/await}
