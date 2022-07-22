@@ -4,25 +4,24 @@
 	import Cell from './Cell.svelte';
 	import { IconDetails } from '../Icons';
 	import { Button } from '../button';
+	import {isModalVisible} from '../../store/modal.store'
+
+
 	export let transactions: Transaction[];
 	export let statusFilter: string;
 
 	const dispatch = createEventDispatcher();
 
+	$: data = statusFilter ? transactions.filter(t => t.status === statusFilter) : transactions
+
 	const handleSeeDetails = (transaction: Transaction) => {
-		dispatch(Events.TRANSACTION_DETAILS, {
-			data: transaction
-		});
+		dispatch(Events.TRANSACTION_DETAILS,transaction);
 	};
 
-	$: data = statusFilter ? transactions.filter((t) => t.status == statusFilter) : transactions;
 
 	let columns = ['Titulo', 'Descrição', 'Status', 'Valor'];
-
-	let rowStyle =
-		'pl-8 py-4 flex w-[400px] border-b-[1px] border-gray-400 hover:bg-gray-200 transition-all';
 </script>
-
+<div class="md:px-8">
 <div class="flex items-center ">
 	{#each columns as c}
 		<Cell label={c} header={true} />
@@ -36,6 +35,7 @@
 		<Cell label={transaction.status} />
 		<Cell label={`R$ ${transaction.amount}`} />
 
-		<Button icon={<IconDetails />} label={null} />
+		<Button icon={IconDetails} on:click={() => handleSeeDetails(transaction)}/>
 	</div>
 {/each}
+</div>

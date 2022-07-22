@@ -3,13 +3,11 @@
 	export let label: string | null;
 </script>
 
-<div>
-	{#if icon}
-		<slot name="icon" />
-	{/if}
-	<button on:click>
+	<button on:click >
+		{#if icon}
+			<svelte:component this={icon}/>
+		{/if}
 		{#if label}
 			{label}
 		{/if}
 	</button>
-</div>
