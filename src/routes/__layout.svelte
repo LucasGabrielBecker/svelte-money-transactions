@@ -10,14 +10,6 @@
 		rel="stylesheet"
 	/>
 </svelte:head>
-<div class="w-full px-12 py-4">
-	<img
-		src="/Rock_On_R-Angle_A1.png"
-		class="hover:scale-125 transition-all"
-		alt="hand logo"
-		width="100px"
-	/>
-</div>
 <slot />
 
 <style>
