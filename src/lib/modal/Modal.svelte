@@ -73,8 +73,11 @@
 				{error.message && error.message}
 			{/await}
 
-			<div class="actions">
-				<button on:click={closeModal}>OK</button>
+			<div class=" flex justify-end">
+				<button
+					class="px-4 py-2 border border-gray-800 rounded-md mt-8 hover:bg-gray-400 hover:text-white transition-all"
+					on:click={closeModal}>OK</button
+				>
 			</div>
 		</div>
 	</div>

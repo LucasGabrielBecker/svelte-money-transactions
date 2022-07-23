@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
 	import '../app.css';
 	import { Modals, closeModal } from 'svelte-modals';
+	let scroll: number = 0;
 </script>
 
 <svelte:head>
@@ -12,6 +13,16 @@
 	/>
 </svelte:head>
 <slot />
+
+<svelte:window bind:scrollY={scroll} />
+<img
+	src="/sphere.png"
+	width="200"
+	class="absolute top-2 right-2 opacity-20"
+	style:transform={`translateY(${scroll * 1.2}px`}
+	style:scale={scroll * 0.4}
+	alt="sphere"
+/>
 <Modals>
 	<div slot="backdrop" class="backdrop" on:click={closeModal} />
 </Modals>
