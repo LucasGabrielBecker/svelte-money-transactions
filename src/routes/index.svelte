@@ -6,6 +6,7 @@
 	import TransactionsTable from '../lib/TransactionsTable/TransactionsTable.svelte';
 	import type { Transaction } from '../types/transaction';
 	import { isModalVisible } from '../store/modal.store';
+	import { Env } from '../env';
 
 	let showModal: boolean = false;
 	let transactions = getTransactions();
@@ -18,7 +19,7 @@
 		showModal = true;
 	};
 	async function getTransactions(): Promise<Transaction[]> {
-		const res = await fetch('https://warren-transactions-api.herokuapp.com/api/transactions');
+		const res = await fetch(Env.BACKEND_URL);
 		const data = await res.json();
 		return data;
 	}
