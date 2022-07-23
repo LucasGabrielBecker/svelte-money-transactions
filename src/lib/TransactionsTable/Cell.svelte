@@ -4,10 +4,13 @@
 </script>
 
 <div
-	class={`pl-10 py-4 flex w-[400px] border-b-[1px] border-gray-400 transition-all items-center justify-between ${
-		header && 'bg-gray-600 font-bold text-white'
+	data-testid="cell"
+	class={`pl-10 py-4 flex w-[400px] border-b-[1px] text-white border-gray-400 transition-all items-center justify-between ${
+		header && 'bg-gray-600 font-bold'
 	}`}
 >
-	{label}
+	{#if label}
+		{label}
+	{/if}
 	<slot />
 </div>

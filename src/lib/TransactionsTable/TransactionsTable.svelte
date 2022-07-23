@@ -6,7 +6,7 @@
 	import Modal from '../modal/Modal.svelte';
 	import { openModal } from 'svelte-modals';
 
-	function handleClick(id: number) {
+	function handleClick(id: string) {
 		openModal(Modal, { id });
 	}
 
@@ -31,8 +31,8 @@
 			<Cell label={transaction.description} />
 			<Cell label={transaction.status} />
 			<Cell label={`R$ ${transaction.amount}`}>
-				<Button icon={EyeIcon} on:click={() => handleClick(transaction.id)} /></Cell
-			>
+				<Button icon={EyeIcon} on:click={() => handleClick(transaction.id)} />
+			</Cell>
 		</div>
 	{/each}
 </div>

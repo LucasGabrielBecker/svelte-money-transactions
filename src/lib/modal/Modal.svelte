@@ -3,10 +3,10 @@
 	import { closeModal } from 'svelte-modals';
 	import { Env } from '../../env';
 	import Spinner from '../spinner/Spinner.svelte';
-	import { writable } from 'svelte/store';
-	export let id: number, isOpen: boolean;
+	import { tweened } from 'svelte/motion';
+	export let id: string, isOpen: boolean;
 
-	const progress = writable(0.05);
+	const progress = tweened(0.05);
 
 	let transaction = getTransaction();
 	const localStorageKey = 'transaction_data';
