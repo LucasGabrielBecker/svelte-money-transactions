@@ -5,19 +5,12 @@
 	import { Spinner } from '$lib/spinner';
 	import TransactionsTable from '../lib/TransactionsTable/TransactionsTable.svelte';
 	import type { Transaction } from '../types/transaction';
-	import { isModalVisible } from '../store/modal.store';
 	import { Env } from '../env';
 
-	let showModal: boolean = false;
 	let transactions = getTransactions();
 	let statusFilter: string = '';
 	let search: string;
 
-	let selectedRow: Transaction;
-	const handleShowDetails = (event: { detail: Transaction }) => {
-		selectedRow = event.detail;
-		showModal = true;
-	};
 	async function getTransactions(): Promise<Transaction[]> {
 		const res = await fetch(Env.BACKEND_URL);
 		const data = await res.json();
@@ -26,8 +19,6 @@
 </script>
 
 <div class="">
-	<Modal show={showModal} data={selectedRow} />
-
 	{#await transactions}
 		<img
 			src="/Rock_On_R-Angle_A1.png"
@@ -37,7 +28,7 @@
 		/>
 		<Spinner />
 	{:then result}
-		<div class="flex flex-col md:flex-row items-center mb-12 sticky top-0 bg-white">
+		<div class="flex flex-col md:flex-row items-center mb-12 sticky top-0 bg-[#181a1b]">
 			<img
 				src="/Rock_On_R-Angle_A1.png"
 				class="hover:scale-125 transition-all mr-4"
@@ -60,7 +51,6 @@
 				  )
 				: result}
 			{statusFilter}
-			on:TRANSACTION_DETAILS={handleShowDetails}
 		/>
 	{:catch error}
 		<p style="color: red">{error.message}</p>

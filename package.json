@@ -70,5 +70,8 @@
 			"svelte"
 		],
 		"testEnvironment": "jsdom"
+	},
+	"dependencies": {
+		"svelte-modals": "^1.1.0"
 	}
 }

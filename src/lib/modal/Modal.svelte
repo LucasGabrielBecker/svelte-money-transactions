@@ -1,79 +1,80 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
-	import {onMount} from 'svelte'
 	import type { Transaction } from '../../types/transaction';
+	import { closeModal } from 'svelte-modals';
+	import { Env } from '../../env';
+	import Spinner from '../spinner/Spinner.svelte';
 	import { writable } from 'svelte/store';
-	
-	export let show: boolean = false;
-	export let data: Transaction;
+	export let id: number, isOpen: boolean;
 
+	const progress = writable(0.05);
 
-	const progress = writable(0);
+	let transaction = getTransaction();
+	const localStorageKey = 'transaction_data';
 
-	const toggle = () => {
-		show = !show;
-	};
+	async function getTransaction(): Promise<Transaction> {
+		const barStatuses = new Map();
+		barStatuses.set('created', 0.05);
+		barStatuses.set('processing', 0.5);
+		barStatuses.set('processed', 1);
+		let existentData = window.sessionStorage.getItem(localStorageKey);
+		existentData = existentData ? JSON.parse(existentData) : null;
 
-	const modalType = {
-		Resgate: 'Resgate',
-		Depósito: 'Depósito',
-		'Movimentação Interna': 'Movimentação Interna'
-	};
+		if (existentData && existentData[id]) {
+			const cachedTransaction = existentData[id] as unknown as Transaction;
+			const result = barStatuses.get(cachedTransaction.status);
+			progress.set(result);
 
-	const statusInfoPosition = {
-		Depósito: 'absolute right-2',
-		Resgate: 'absolute left-2',
-		'Movimentação Interna': 'transform translate-x-6/12'
-	};
+			return cachedTransaction;
+		}
 
-	onMount(() => {
-
-	data && data.title === 'Resgate' && progress.set(0.1)
-	data && data.title === 'Depósito' && progress.set(0.5)
-	data && data.title === 'Movimentação Interna' && progress.set(1)
-	})
+		const res = await fetch(`${Env.BACKEND_URL}/${id}`);
+		const data: Transaction = await res.json();
+		window.sessionStorage.setItem(
+			localStorageKey,
+			JSON.stringify(existentData ? { ...existentData, [id]: data } : { [id]: data })
+		);
+		const result = barStatuses.get(data.status);
+		progress.set(result);
+		return data;
+	}
 </script>
 
-{#if show}
-	<div
-		in:fade
-		out:fade
-		data-testid="modal"
-		class="absolute z-[900] text-gray-800 top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,.3)] flex justify-center items-center"
-	>
-		<div
-			data-testid="modal-content"
-			class="relative text-lg font-bold w-[600px] h-[600px] bg-white rounded-lg  flex justify-center items-center"
-		>
-			<button
-				data-testid="modal-close-button"
-				on:click={toggle}
-				class="absolute top-4 right-4 p-2 hover:scale-125 transition-all">X</button
-			>
+{#if isOpen}
+	<div role="dialog" class="modal">
+		<div class="contents text-gray-700">
+			{#await transaction}
+				<Spinner />
+			{:then result}
+				<div class="flex flex-col justify-center w-full px-12">
+					<div class="mb-6 text-gray-900 text-center text-xl font-bold">{result.title}</div>
 
-			<div class="flex flex-col items-center w-full justify-center p-24">
-				{modalType[data.title]}
-				<div class="flex w-full mt-12 justify-between">
-					<span>Solicitada</span>
-					<span>Processando</span>
-					<span>Concluida</span>
+					<progress value={$progress} />
+					<div class="flex justify-between text-gray-700 text-sm mb-16">
+						<span>Solicitada</span>
+						<span>Processando</span>
+						<span>Concluida</span>
+					</div>
+
+					<div class="border-b-2 border-gray-700 text-lg font-bold text-gray-900">
+						Transferindo de
+					</div>
+					<div class="text-sm flex justify-between text-gray-500 mt-2">
+						<span>{result.from}</span>
+						<span class="font-bold">R$ {result.amount}</span>
+					</div>
+
+					<div class="border-b-2 border-gray-700 text-lg font-bold text-gray-900 mt-12">Para</div>
+					<div class="text-sm flex justify-between text-gray-500  mt-2">
+						<span>{result.from}</span>
+						<span class="font-bold">R$ {result.amount}</span>
+					</div>
 				</div>
+			{:catch error}
+				{error.message && error.message}
+			{/await}
 
-				<div class="w-full mb-4 mt-12">
-						<div class="border-b-2 border-gray-700 flex flex-col text-gray-700">
-							<p>Transferindo de
-						</div>
-						<p class="text-gray-500 font-sm">{data.from}</p>
-				</div>
-
-					<div class="w-full">
-						<div class="border-b-2 border-gray-700 flex flex-col text-gray-700">
-							<p>Transferindo para
-						</div>
-						<p class="text-gray-500 font-sm">{data.to}</p>
-				</div>
-
-
+			<div class="actions">
+				<button on:click={closeModal}>OK</button>
 			</div>
 		</div>
 	</div>
@@ -83,5 +84,37 @@
 	progress {
 		display: block;
 		width: 100%;
+		border-radius: 15px;
+		margin-bottom: 20px;
 	}
-	</style>
+	.modal {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		/* allow click-through to backdrop */
+		pointer-events: none;
+	}
+
+	.contents {
+		min-width: 600px;
+		border-radius: 6px;
+		padding: 16px;
+		background: white;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		pointer-events: auto;
+	}
+
+	.actions {
+		margin-top: 32px;
+		display: flex;
+		justify-content: flex-end;
+	}
+</style>
