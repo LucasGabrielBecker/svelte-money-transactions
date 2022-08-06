@@ -39,49 +39,44 @@
 	}
 </script>
 
-{#if isOpen}
-	<div role="dialog" class="modal">
-		<div class="contents text-gray-700">
-			{#await transaction}
-				<Spinner />
-			{:then result}
-				<div class="flex flex-col justify-center w-full px-12">
-					<div class="mb-6 text-gray-900 text-center text-xl font-bold">{result.title}</div>
+<div role="dialog" class="modal" class:modal-open={isOpen}>
+	<div class="contents text-gray-700">
+		{#await transaction}
+			<Spinner />
+		{:then result}
+			<div class="flex flex-col justify-center w-full px-12">
+				<div class="mb-6 text-gray-900 text-center text-xl font-bold">{result.title}</div>
 
-					<progress value={$progress} />
-					<div class="flex justify-between text-gray-700 text-sm mb-16">
-						<span>Solicitada</span>
-						<span>Processando</span>
-						<span>Concluida</span>
-					</div>
-
-					<div class="border-b-2 border-gray-700 text-lg font-bold text-gray-900">
-						Transferindo de
-					</div>
-					<div class="text-sm flex justify-between text-gray-500 mt-2">
-						<span>{result.from}</span>
-						<span class="font-bold">R$ {result.amount}</span>
-					</div>
-
-					<div class="border-b-2 border-gray-700 text-lg font-bold text-gray-900 mt-12">Para</div>
-					<div class="text-sm flex justify-between text-gray-500  mt-2">
-						<span>{result.from}</span>
-						<span class="font-bold">R$ {result.amount}</span>
-					</div>
+				<progress value={$progress} />
+				<div class="flex justify-between text-gray-700 text-sm mb-16">
+					<span>Solicitada</span>
+					<span>Processando</span>
+					<span>Concluida</span>
 				</div>
-			{:catch error}
-				{error.message && error.message}
-			{/await}
 
-			<div class=" flex justify-end">
-				<button
-					class="px-4 py-2 border border-gray-800 rounded-md mt-8 hover:bg-gray-400 hover:text-white transition-all"
-					on:click={closeModal}>OK</button
-				>
+				<div class="border-b-2 border-gray-700 text-lg font-bold text-gray-900">
+					Transferindo de
+				</div>
+				<div class="text-sm flex justify-between text-gray-500 mt-2">
+					<span>{result.from}</span>
+					<span class="font-bold">R$ {result.amount}</span>
+				</div>
+
+				<div class="border-b-2 border-gray-700 text-lg font-bold text-gray-900 mt-12">Para</div>
+				<div class="text-sm flex justify-between text-gray-500  mt-2">
+					<span>{result.from}</span>
+					<span class="font-bold">R$ {result.amount}</span>
+				</div>
 			</div>
+		{:catch error}
+			{error.message && error.message}
+		{/await}
+
+		<div class=" flex justify-end">
+			<button class="btn" on:click={closeModal}>OK</button>
 		</div>
 	</div>
-{/if}
+</div>
 
 <style>
 	progress {

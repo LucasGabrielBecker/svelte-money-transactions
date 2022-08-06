@@ -72,6 +72,7 @@
 		"testEnvironment": "jsdom"
 	},
 	"dependencies": {
+		"daisyui": "^2.22.0",
 		"svelte-modals": "^1.1.0"
 	}
 }

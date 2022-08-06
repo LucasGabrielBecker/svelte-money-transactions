@@ -4,10 +4,7 @@
 	import { capitalize } from '../../utils';
 </script>
 
-<select
-	bind:value
-	class="px-8 w-[180px] py-2 mt-2 md:mt-0 ml-4 border-[1px]  border-gray-400 rounded-md outline-none bg-slate-800 h-[48px]"
->
+<select bind:value class="select ml-6 block w-[200px]">
 	<option selected value={null}>Todos</option>
 	{#each options as row}
 		<option value={row}>{capitalize(row)}</option>
